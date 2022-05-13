@@ -1,0 +1,41 @@
+version: "3.1"
+
+services:
+  postgres:
+    container_name: appointment-postgres
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    restart: always
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  
+  adminer:
+    container_name: appointment-adminer
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - 9100:9100
+    command:
+      - 'php'
+      - '-S'
+      - '[::]:9100'
+      - '-t'
+      - '/var/www/html'
+    entrypoint:
+      - 'entrypoint.sh'
+      - 'docker-php-entrypoint'
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: dracula
+
+  api:
+    container_name: appointment-api
+    build: .
+    ports:
+      - 9000:9000
+    depends_on:
+      - postgres
