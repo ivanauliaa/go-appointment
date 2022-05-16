@@ -28,6 +28,10 @@ func (h *timesHandler) PostTimeHandler(c echo.Context) error {
 		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
+	if err := c.Validate(payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
 	requestHeader := model.RequestHeader{
 		Authorization: c.Request().Header["Authorization"][0],
 	}

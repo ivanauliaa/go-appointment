@@ -15,8 +15,8 @@ type Appointment struct {
 }
 
 type PostAppointmentPayload struct {
-	Name string `json:"name"`
-	Room string `json:"room"`
+	Name string `json:"name" validate:"required"`
+	Room string `json:"room" validate:"required"`
 }
 
 type PostAppointmentResponse struct {
@@ -24,7 +24,7 @@ type PostAppointmentResponse struct {
 }
 
 type PostAppointmentConfirmPayload struct {
-	AppointmentID uint `param:"appointmentID"`
-	DateID        uint `json:"dateID"`
-	TimeID        uint `json:"timeID"`
+	AppointmentID uint `param:"appointmentID" validate:"required"`
+	DateID        uint `json:"dateID" validate:"required"`
+	TimeID        uint `json:"timeID" validate:"required"`
 }

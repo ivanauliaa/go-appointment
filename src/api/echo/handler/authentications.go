@@ -48,6 +48,10 @@ func (h *authenticationsHandler) RegisterHandler(c echo.Context) error {
 		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
+	if err := c.Validate(payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
 	code, err := h.service.Register(payload)
 	if err != nil {
 		if code != http.StatusInternalServerError {

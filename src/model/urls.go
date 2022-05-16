@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type URL struct {
 	gorm.Model
 	AppointmentID uint   `gorm:"not null" param:"appointmentID" json:"appointmentID"`
-	URL           string `json:"url"`
+	URL           string `json:"url" validate:"required"`
 }
 
 type PostURLPayload struct {

@@ -28,6 +28,10 @@ func (h *appointmentsHandler) PostAppointmentHandler(c echo.Context) error {
 		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
+	if err := c.Validate(payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
 	requestHeader := model.RequestHeader{
 		Authorization: c.Request().Header["Authorization"][0],
 	}
@@ -51,6 +55,10 @@ func (h *appointmentsHandler) PostAppointmentHandler(c echo.Context) error {
 func (h *appointmentsHandler) PostAppointmentConfirmHandler(c echo.Context) error {
 	payload := model.PostAppointmentConfirmPayload{}
 	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(payload); err != nil {
 		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
