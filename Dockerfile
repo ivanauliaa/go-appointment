@@ -10,9 +10,13 @@ RUN apk update && apk add libc-dev && apk add gcc && apk add make
 
 COPY . $GOPATH/src/app/
 
-RUN go get
+RUN pwd
 
-RUN go build -a -o app .
+RUN ls -al
+
+RUN go mod tidy
+
+RUN go build -a -o app ./src
 
 FROM alpine:3.15.0 AS production
 

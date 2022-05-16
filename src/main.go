@@ -7,15 +7,13 @@ import (
 
 	"github.com/ivanauliaa/go-appoinment/src/api/echo/server"
 	"github.com/ivanauliaa/go-appoinment/src/database"
-
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 )
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("error load .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal("error load .env file: ", err.Error())
+	// }
 
 	database.InitMigration()
 }
