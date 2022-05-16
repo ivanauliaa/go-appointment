@@ -1,0 +1,12 @@
+name: ci github workflow
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  echo-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "echo ci workflow"

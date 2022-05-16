@@ -1,0 +1,12 @@
+name: cd github workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  echo-cd:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "echo cd workflow"
