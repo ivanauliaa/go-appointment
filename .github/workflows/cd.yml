@@ -27,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ivanauliaa/go-hello:latest
+          tags: ivanauliaa/go-appointment:latest
