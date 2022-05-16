@@ -14,7 +14,7 @@ type ResponseWithMessage struct {
 
 type ResponseWithData struct {
 	CommonResponse
-	Data interface{}
+	Data interface{} `json:"data"`
 }
 
 func SuccessResponse() (int, CommonResponse) {

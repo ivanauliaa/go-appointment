@@ -13,19 +13,18 @@ import (
 func AppointmentsRoutes(e *echo.Echo) {
 	db := database.Connect()
 	appointmentsRepository := repository.NewAppointmentsRepository(db)
-	eventsRepository := repository.NewEventsRepository(db)
 	datesRepository := repository.NewDatesRepository(db)
 	timesRepository := repository.NewTimesRepository(db)
-	urlsRepository := repository.NewURLsRepository(db)
+	eventsRepository := repository.NewEventsRepository(db)
 
 	service := service.NewAppointmentsService(
 		appointmentsRepository,
-		eventsRepository,
 		datesRepository,
 		timesRepository,
-		urlsRepository,
+		eventsRepository,
 	)
 	handler := handler.NewAppointmentsHandler(service)
 
 	e.POST("/appointments", handler.PostAppointmentHandler, auth.JWTMiddleware())
+	e.POST("/appointments/:appointmentID/confirm", handler.PostAppointmentConfirmHandler, auth.JWTMiddleware())
 }

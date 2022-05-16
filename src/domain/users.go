@@ -17,5 +17,6 @@ type UsersRepository interface {
 	AddUser(payload model.User) (int, error)
 	VerifyNewUserEmail(email string) (int, error)
 	VerifyUserCredential(email string, password string) (uint, int, error)
+	VerifyUser(userID uint) (int, error)
 	Hello() string
 }

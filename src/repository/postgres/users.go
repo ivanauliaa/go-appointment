@@ -56,3 +56,13 @@ func (r *usersRepository) VerifyUserCredential(email string, password string) (u
 func (r *usersRepository) Hello() string {
 	return "hello world"
 }
+
+func (r *usersRepository) VerifyUser(userID uint) (int, error) {
+	result := r.db.First(&model.User{}, "id = ?", userID)
+
+	if result.RowsAffected == 0 {
+		return http.StatusNotFound, fmt.Errorf("user not found")
+	}
+
+	return http.StatusOK, nil
+}

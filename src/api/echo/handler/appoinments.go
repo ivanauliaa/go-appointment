@@ -23,23 +23,8 @@ func NewAppointmentsHandler(s domain.AppointmentsService) domain.AppointmentsHan
 }
 
 func (h *appointmentsHandler) PostAppointmentHandler(c echo.Context) error {
-	appointmentPayload := model.Appointment{}
-	if err := c.Bind(&appointmentPayload); err != nil {
-		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
-	}
-
-	eventPayload := model.Event{}
-	if err := c.Bind(&eventPayload); err != nil {
-		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
-	}
-
-	datePayload := model.Date{}
-	if err := c.Bind(&datePayload); err != nil {
-		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
-	}
-
-	timePayload := model.Time{}
-	if err := c.Bind(&timePayload); err != nil {
+	payload := model.PostAppointmentPayload{}
+	if err := c.Bind(&payload); err != nil {
 		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
@@ -47,11 +32,8 @@ func (h *appointmentsHandler) PostAppointmentHandler(c echo.Context) error {
 		Authorization: c.Request().Header["Authorization"][0],
 	}
 
-	appointment, code, err := h.service.AddAppointment(
-		appointmentPayload,
-		eventPayload,
-		datePayload,
-		timePayload,
+	appointmentID, code, err := h.service.AddAppointment(
+		payload,
 		requestHeader,
 	)
 	if err != nil {
@@ -63,5 +45,31 @@ func (h *appointmentsHandler) PostAppointmentHandler(c echo.Context) error {
 		return c.JSON(utils.ServerErrorResponse())
 	}
 
-	return c.JSON(utils.SuccessResponseWithData(appointment))
+	return c.JSON(utils.SuccessResponseWithData(appointmentID))
+}
+
+func (h *appointmentsHandler) PostAppointmentConfirmHandler(c echo.Context) error {
+	payload := model.PostAppointmentConfirmPayload{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	code, err := h.service.ConfirmAppointment(
+		payload,
+		requestHeader,
+	)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponse())
 }

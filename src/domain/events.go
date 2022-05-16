@@ -10,4 +10,5 @@ type EventsService interface {
 
 type EventsRepository interface {
 	AddEvent(payload model.Event) (int, error)
+	VerifyNewEvent(appointmentID uint) (int, error)
 }

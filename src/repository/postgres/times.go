@@ -1,6 +1,9 @@
 package postgres
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/ivanauliaa/go-appoinment/src/domain"
 	"github.com/ivanauliaa/go-appoinment/src/model"
 	"gorm.io/gorm"
@@ -18,6 +21,41 @@ func NewTimesRepository(d *gorm.DB) domain.TimesRepository {
 	return &newRepository
 }
 
-func (r *timesRepository) AddTime(payload model.Time) (int, error) {
-	return 0, nil
+func (r *timesRepository) AddTime(payload model.Time) (model.PostTimeResponse, int, error) {
+	result := r.db.Create(&payload)
+
+	if result.RowsAffected == 0 {
+		return model.PostTimeResponse{}, http.StatusInternalServerError, result.Error
+	}
+
+	timeID := model.PostTimeResponse{
+		TimeID: payload.ID,
+	}
+
+	return timeID, http.StatusOK, nil
+}
+
+func (r *timesRepository) VerifyTime(timeID uint) (int, error) {
+	result := r.db.First(&model.Time{}, "id = ?", timeID)
+
+	if result.RowsAffected == 0 {
+		return http.StatusNotFound, fmt.Errorf("time not found")
+	}
+
+	return http.StatusOK, nil
+}
+
+func (r *timesRepository) VerifyTimeDateID(timeID uint, dateID uint) (int, error) {
+	time := model.Time{}
+	result := r.db.First(&time, "id = ?", timeID)
+
+	if result.RowsAffected == 0 {
+		return http.StatusNotFound, fmt.Errorf("time not found")
+	}
+
+	if time.DateID != dateID {
+		return http.StatusBadRequest, fmt.Errorf("time not belongs to related date")
+	}
+
+	return http.StatusOK, nil
 }

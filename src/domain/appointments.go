@@ -7,18 +7,24 @@ import (
 
 type AppointmentsHandler interface {
 	PostAppointmentHandler(c echo.Context) error
+	PostAppointmentConfirmHandler(c echo.Context) error
 }
 
 type AppointmentsService interface {
 	AddAppointment(
-		appointmentPayload model.Appointment,
-		eventPayload model.Event,
-		datePayload model.Date,
-		timePayload model.Time,
+		payload model.PostAppointmentPayload,
 		requestHeader model.RequestHeader,
-	) (model.Appointment, int, error)
+	) (model.PostAppointmentResponse, int, error)
+	ConfirmAppointment(
+		payload model.PostAppointmentConfirmPayload,
+		requestHeader model.RequestHeader,
+	) (int, error)
 }
 
 type AppointmentsRepository interface {
-	AddAppointment(payload model.Appointment) (model.Appointment, int, error)
+	AddAppointment(payload model.Appointment) (model.PostAppointmentResponse, int, error)
+	VerifyAppointment(appointmentID uint) (int, error)
+	VerifyAppointmentOwner(appointmentID uint, userID uint) (int, error)
+	VerifyAppointmentGuest(appointmentID uint, userID uint) (int, error)
+	GetAppointment(appointmentID uint) (model.Appointment, int, error)
 }

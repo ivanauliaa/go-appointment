@@ -1,6 +1,9 @@
 package postgres
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/ivanauliaa/go-appoinment/src/domain"
 	"github.com/ivanauliaa/go-appoinment/src/model"
 	"gorm.io/gorm"
@@ -19,5 +22,22 @@ func NewEventsRepository(d *gorm.DB) domain.EventsRepository {
 }
 
 func (r *eventsRepository) AddEvent(payload model.Event) (int, error) {
-	return 0, nil
+	result := r.db.Create(&payload)
+
+	if result.RowsAffected == 0 {
+		return http.StatusInternalServerError, result.Error
+	}
+
+	return http.StatusOK, nil
+}
+
+func (r *eventsRepository) VerifyNewEvent(appointmentID uint) (int, error) {
+	event := model.Event{}
+	result := r.db.First(&event, "appointment_id = ?", appointmentID)
+
+	if result.RowsAffected > 0 {
+		return http.StatusBadRequest, fmt.Errorf("appointment has fulfilled")
+	}
+
+	return http.StatusOK, nil
 }
