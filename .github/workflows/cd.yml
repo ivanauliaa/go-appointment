@@ -9,7 +9,7 @@ jobs:
   echo-cd:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "echo cd workflow"
+      - run: echo "echo cd workflow ping"
 
   build-image:
     runs-on: ubuntu-latest
