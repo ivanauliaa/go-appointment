@@ -128,3 +128,59 @@ func (h *appointmentsHandler) GetAppointmentHandler(c echo.Context) error {
 
 	return c.JSON(utils.SuccessResponseWithData(appointmentWithRelation))
 }
+
+func (h *appointmentsHandler) PutAppointmentHandler(c echo.Context) error {
+	payload := model.PutAppointmentPayload{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	code, err := h.service.UpdateAppointment(
+		payload,
+		requestHeader,
+	)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponse())
+}
+
+func (h *appointmentsHandler) DeleteAppointmentHandler(c echo.Context) error {
+	payload := model.DeleteAppointmentPayload{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	code, err := h.service.DeleteAppointment(
+		payload,
+		requestHeader,
+	)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponse())
+}

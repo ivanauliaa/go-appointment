@@ -92,3 +92,33 @@ func (r *appointmentsRepository) GetAppointments(credentialID uint) ([]model.App
 
 	return appointments, http.StatusOK, nil
 }
+
+func (r *appointmentsRepository) UpdateAppointment(payload model.Appointment, appointmentID uint) (int, error) {
+	appointment := model.Appointment{}
+	result := r.db.First(&appointment, "id = ?", appointmentID)
+
+	if result.RowsAffected == 0 {
+		return http.StatusNotFound, fmt.Errorf("appointment not found")
+	}
+
+	appointment.Name = payload.Name
+	appointment.Room = payload.Room
+
+	result = r.db.Save(&appointment)
+
+	if result.RowsAffected == 0 {
+		return http.StatusInternalServerError, result.Error
+	}
+
+	return http.StatusOK, nil
+}
+
+func (r *appointmentsRepository) DeleteAppointment(appointmentID uint) (int, error) {
+	result := r.db.Where("id = ?", appointmentID).Delete(&model.Appointment{})
+
+	if result.RowsAffected == 0 {
+		return http.StatusInternalServerError, result.Error
+	}
+
+	return http.StatusOK, nil
+}

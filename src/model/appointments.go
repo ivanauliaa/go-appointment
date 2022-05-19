@@ -37,3 +37,13 @@ type AppointmentWithRelation struct {
 type GetAppointmentPayload struct {
 	AppointmentID uint `param:"appointmentID"`
 }
+
+type PutAppointmentPayload struct {
+	AppointmentID uint   `param:"appointmentID"`
+	Name          string `json:"name" validate:"required"`
+	Room          string `json:"room" validate:"required"`
+}
+
+type DeleteAppointmentPayload struct {
+	AppointmentID uint `param:"appointmentID"`
+}

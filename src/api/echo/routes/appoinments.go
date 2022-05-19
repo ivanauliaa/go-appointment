@@ -31,4 +31,6 @@ func AppointmentsRoutes(e *echo.Echo) {
 	e.POST("/appointments/:appointmentID/confirm", handler.PostAppointmentConfirmHandler, auth.JWTMiddleware())
 	e.GET("/appointments", handler.GetAppointmentsHandler, auth.JWTMiddleware())
 	e.GET("/appointments/:appointmentID", handler.GetAppointmentHandler, auth.JWTMiddleware())
+	e.PUT("/appointments/:appointmentID", handler.PutAppointmentHandler, auth.JWTMiddleware())
+	e.DELETE("/appointments/:appointmentID", handler.DeleteAppointmentHandler, auth.JWTMiddleware())
 }
