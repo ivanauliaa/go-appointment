@@ -7,6 +7,7 @@ import (
 
 type UsersHandler interface {
 	HelloHandler(c echo.Context) error
+	HelloWorldHandler(c echo.Context) error
 }
 
 type UsersService interface {

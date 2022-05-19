@@ -17,4 +17,5 @@ func UsersRoutes(e *echo.Echo) {
 	handler := handler.NewUsersHandler(service)
 
 	e.GET("/hello", handler.HelloHandler, auth.JWTMiddleware())
+	e.GET("/hello-world", handler.HelloWorldHandler, nil)
 }

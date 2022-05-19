@@ -28,3 +28,15 @@ jobs:
         with:
           push: true
           tags: ivanauliaa/go-appointment:latest
+      - name: ssh aws ec2 then update docker image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/app/api
+            docker-compose down
+            docker image rm ivanauliaa/go-appointment:latest
+            docker-compose up -d
