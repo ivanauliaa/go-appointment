@@ -11,7 +11,7 @@ import (
 
 type TimesService struct {
 	timesRepository        domain.TimesRepository
-	appointsmentRepository domain.AppointmentsRepository
+	appointmentsRepository domain.AppointmentsRepository
 	datesRepository        domain.DatesRepository
 }
 
@@ -22,7 +22,7 @@ func NewTimesService(
 ) domain.TimesService {
 	newService := TimesService{
 		timesRepository:        tr,
-		appointsmentRepository: ar,
+		appointmentsRepository: ar,
 		datesRepository:        dr,
 	}
 
@@ -33,7 +33,7 @@ func (s *TimesService) AddTime(
 	payload model.PostTimePayload,
 	requestHeader model.RequestHeader,
 ) (model.PostTimeResponse, int, error) {
-	if code, err := s.appointsmentRepository.VerifyAppointment(payload.AppointmentID); err != nil {
+	if code, err := s.appointmentsRepository.VerifyAppointment(payload.AppointmentID); err != nil {
 		return model.PostTimeResponse{}, code, err
 	}
 
@@ -44,11 +44,15 @@ func (s *TimesService) AddTime(
 		return model.PostTimeResponse{}, http.StatusBadRequest, err
 	}
 
-	if code, err := s.appointsmentRepository.VerifyAppointmentOwner(payload.AppointmentID, credentialId); err != nil {
+	if code, err := s.appointmentsRepository.VerifyAppointmentOwner(payload.AppointmentID, credentialId); err != nil {
 		return model.PostTimeResponse{}, code, err
 	}
 
 	if code, err := s.datesRepository.VerifyDate(payload.DateID); err != nil {
+		return model.PostTimeResponse{}, code, err
+	}
+
+	if code, err := s.datesRepository.VerifyDateAppointmentID(payload.DateID, payload.AppointmentID); err != nil {
 		return model.PostTimeResponse{}, code, err
 	}
 

@@ -11,8 +11,12 @@ import (
 )
 
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("error load .env file: ", err.Error())
+	environment := os.Getenv("ENVIRONMENT")
+
+	if environment != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Fatal("error load .env file: ", err.Error())
+		}
 	}
 
 	database.InitMigration()

@@ -59,3 +59,21 @@ func (r *datesRepository) VerifyDateAppointmentID(dateID uint, appointmentID uin
 
 	return http.StatusOK, nil
 }
+
+func (r *datesRepository) GetDate(dateID uint) (model.Date, int, error) {
+	date := model.Date{}
+	result := r.db.First(&date, "id = ?", dateID)
+
+	if result.RowsAffected == 0 {
+		return model.Date{}, http.StatusNotFound, fmt.Errorf("date not found")
+	}
+
+	return date, http.StatusOK, nil
+}
+
+func (r *datesRepository) GetDates(appointmentID uint) ([]model.Date, int, error) {
+	dates := []model.Date{}
+	r.db.Where("appointment_id = ?", appointmentID).Find(&dates)
+
+	return dates, http.StatusOK, nil
+}

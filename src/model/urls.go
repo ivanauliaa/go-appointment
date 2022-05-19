@@ -8,10 +8,10 @@ type URL struct {
 	URL           string `json:"url" validate:"required"`
 }
 
-type PostURLPayload struct {
-	AppointmentID uint `param:"appointmentID"`
-}
-
 type PostURLResponse struct {
 	AppointmentURL string `json:"appointmentURL"`
+}
+
+type GetURLPayload struct {
+	AppointmentID uint `param:"appointmentID"`
 }

@@ -18,4 +18,5 @@ func URLsRoutes(e *echo.Echo) {
 	handler := handler.NewURLsHandler(service)
 
 	e.POST("/appointments/:appointmentID/url", handler.PostURLHandler, auth.JWTMiddleware())
+	e.GET("/appointments/:appointmentID/url", handler.GetURLHandler, auth.JWTMiddleware())
 }

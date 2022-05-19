@@ -14,3 +14,8 @@ type Date struct {
 type PostDateResponse struct {
 	DateID uint `json:"dateID"`
 }
+
+type AppointmentDate struct {
+	Date
+	Times []Time `json:"times"`
+}

@@ -8,6 +8,8 @@ import (
 type AppointmentsHandler interface {
 	PostAppointmentHandler(c echo.Context) error
 	PostAppointmentConfirmHandler(c echo.Context) error
+	GetAppointmentsHandler(c echo.Context) error
+	GetAppointmentHandler(c echo.Context) error
 }
 
 type AppointmentsService interface {
@@ -19,6 +21,11 @@ type AppointmentsService interface {
 		payload model.PostAppointmentConfirmPayload,
 		requestHeader model.RequestHeader,
 	) (int, error)
+	GetAppointments(requestHeader model.RequestHeader) ([]model.Appointment, int, error)
+	GetAppointment(
+		payload model.GetAppointmentPayload,
+		requestHeader model.RequestHeader,
+	) (model.AppointmentWithRelation, int, error)
 }
 
 type AppointmentsRepository interface {
@@ -27,4 +34,5 @@ type AppointmentsRepository interface {
 	VerifyAppointmentOwner(appointmentID uint, userID uint) (int, error)
 	VerifyAppointmentGuest(appointmentID uint, userID uint) (int, error)
 	GetAppointment(appointmentID uint) (model.Appointment, int, error)
+	GetAppointments(credentialID uint) ([]model.Appointment, int, error)
 }

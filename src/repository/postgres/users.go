@@ -66,3 +66,14 @@ func (r *usersRepository) VerifyUser(userID uint) (int, error) {
 
 	return http.StatusOK, nil
 }
+
+func (r *usersRepository) GetUser(userID uint) (model.User, int, error) {
+	user := model.User{}
+	result := r.db.First(&user, "id = ?", userID)
+
+	if result.RowsAffected == 0 {
+		return model.User{}, http.StatusNotFound, fmt.Errorf("user not found")
+	}
+
+	return user, http.StatusOK, nil
+}

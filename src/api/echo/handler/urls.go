@@ -48,3 +48,26 @@ func (h *urlsHandler) PostURLHandler(c echo.Context) error {
 
 	return c.JSON(utils.SuccessResponseWithData(appointmentURL))
 }
+
+func (h *urlsHandler) GetURLHandler(c echo.Context) error {
+	payload := model.URL{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	appointmentURL, code, err := h.service.GetURL(payload, requestHeader)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponseWithData(appointmentURL))
+}

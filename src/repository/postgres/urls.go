@@ -39,8 +39,19 @@ func (r *urlsRepository) VerifyNewURL(appointmentID uint) (int, error) {
 	result := r.db.First(&model.URL{}, "appointment_id = ?", appointmentID)
 
 	if result.RowsAffected > 0 {
-		return http.StatusBadRequest, fmt.Errorf("url for related appointment already exist, try get request instead")
+		return http.StatusBadRequest, fmt.Errorf("url for related appointment already exist, try get request instead to get it")
 	}
 
 	return http.StatusOK, nil
+}
+
+func (r *urlsRepository) GetURL(appointmentID uint) (model.URL, int, error) {
+	url := model.URL{}
+	result := r.db.First(&url, "appointment_id = ?", appointmentID)
+
+	if result.RowsAffected == 0 {
+		return model.URL{}, http.StatusBadRequest, fmt.Errorf("url for related appointment not found, try post request instead to create it")
+	}
+
+	return url, http.StatusOK, nil
 }

@@ -16,15 +16,19 @@ func AppointmentsRoutes(e *echo.Echo) {
 	datesRepository := repository.NewDatesRepository(db)
 	timesRepository := repository.NewTimesRepository(db)
 	eventsRepository := repository.NewEventsRepository(db)
+	usersRepository := repository.NewUsersRepository(db)
 
 	service := service.NewAppointmentsService(
 		appointmentsRepository,
 		datesRepository,
 		timesRepository,
 		eventsRepository,
+		usersRepository,
 	)
 	handler := handler.NewAppointmentsHandler(service)
 
 	e.POST("/appointments", handler.PostAppointmentHandler, auth.JWTMiddleware())
 	e.POST("/appointments/:appointmentID/confirm", handler.PostAppointmentConfirmHandler, auth.JWTMiddleware())
+	e.GET("/appointments", handler.GetAppointmentsHandler, auth.JWTMiddleware())
+	e.GET("/appointments/:appointmentID", handler.GetAppointmentHandler, auth.JWTMiddleware())
 }

@@ -15,3 +15,26 @@ type Event struct {
 	// Date Date `gorm:"foreignKey: DateID" json:"date"`
 	// Time Time `gorm:"foreignKey: TimeID" json:"time"`
 }
+
+type SendEvent struct {
+	GuestEmail string `json:"guestEmail"`
+	HostEmail  string `json:"hostEmail"`
+	Name       string `json:"name"`
+	Date       string `json:"date"`
+	Start      string `json:"start"`
+	End        string `json:"end"`
+	Room       string `json:"room"`
+}
+
+type GetEventPayload struct {
+	AppointmentID uint `param:"appointmentID"`
+}
+
+type EventWithRelation struct {
+	Event
+	SendEvent
+}
+
+type SendEventPayload struct {
+	AppointmentID uint `param:"appointmentID"`
+}

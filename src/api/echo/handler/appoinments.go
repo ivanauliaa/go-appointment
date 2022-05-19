@@ -81,3 +81,50 @@ func (h *appointmentsHandler) PostAppointmentConfirmHandler(c echo.Context) erro
 
 	return c.JSON(utils.SuccessResponse())
 }
+
+func (h *appointmentsHandler) GetAppointmentsHandler(c echo.Context) error {
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	appointments, code, err := h.service.GetAppointments(
+		requestHeader,
+	)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponseWithData(appointments))
+}
+
+func (h *appointmentsHandler) GetAppointmentHandler(c echo.Context) error {
+	payload := model.GetAppointmentPayload{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(utils.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestHeader := model.RequestHeader{
+		Authorization: c.Request().Header["Authorization"][0],
+	}
+
+	appointmentWithRelation, code, err := h.service.GetAppointment(
+		payload,
+		requestHeader,
+	)
+
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(utils.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(utils.ServerErrorResponse())
+	}
+
+	return c.JSON(utils.SuccessResponseWithData(appointmentWithRelation))
+}

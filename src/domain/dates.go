@@ -20,4 +20,6 @@ type DatesRepository interface {
 	AddDate(payload model.Date) (model.PostDateResponse, int, error)
 	VerifyDate(dateID uint) (int, error)
 	VerifyDateAppointmentID(dateID uint, appointmentID uint) (int, error)
+	GetDate(dateID uint) (model.Date, int, error)
+	GetDates(appointmentID uint) ([]model.Date, int, error)
 }

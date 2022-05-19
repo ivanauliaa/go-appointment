@@ -17,4 +17,6 @@ type TimesRepository interface {
 	AddTime(payload model.Time) (model.PostTimeResponse, int, error)
 	VerifyTime(timeID uint) (int, error)
 	VerifyTimeDateID(timeID uint, dateID uint) (int, error)
+	GetTime(timeID uint) (model.Time, int, error)
+	GetTimes(dateID uint) ([]model.Time, int, error)
 }

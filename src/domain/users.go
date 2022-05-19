@@ -18,5 +18,6 @@ type UsersRepository interface {
 	VerifyNewUserEmail(email string) (int, error)
 	VerifyUserCredential(email string, password string) (uint, int, error)
 	VerifyUser(userID uint) (int, error)
+	GetUser(userID uint) (model.User, int, error)
 	Hello() string
 }

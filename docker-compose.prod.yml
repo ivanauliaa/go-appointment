@@ -35,7 +35,7 @@ services:
 
   api:
     container_name: appointment-api
-    build: .
+    image: ivanauliaa/go-appointment:latest
     env_file:
       - .env
     environment:

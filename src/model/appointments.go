@@ -28,3 +28,12 @@ type PostAppointmentConfirmPayload struct {
 	DateID        uint `json:"dateID" validate:"required"`
 	TimeID        uint `json:"timeID" validate:"required"`
 }
+
+type AppointmentWithRelation struct {
+	Appointment
+	Dates []AppointmentDate `json:"dates"`
+}
+
+type GetAppointmentPayload struct {
+	AppointmentID uint `param:"appointmentID"`
+}

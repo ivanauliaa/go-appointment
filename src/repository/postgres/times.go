@@ -59,3 +59,21 @@ func (r *timesRepository) VerifyTimeDateID(timeID uint, dateID uint) (int, error
 
 	return http.StatusOK, nil
 }
+
+func (r *timesRepository) GetTime(timeID uint) (model.Time, int, error) {
+	time := model.Time{}
+	result := r.db.First(&time, "id = ?", timeID)
+
+	if result.RowsAffected == 0 {
+		return model.Time{}, http.StatusNotFound, fmt.Errorf("time not found")
+	}
+
+	return time, http.StatusOK, nil
+}
+
+func (r *timesRepository) GetTimes(dateID uint) ([]model.Time, int, error) {
+	times := []model.Time{}
+	r.db.Where("date_id = ?", dateID).Find(&times)
+
+	return times, http.StatusOK, nil
+}

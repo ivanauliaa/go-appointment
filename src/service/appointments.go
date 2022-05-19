@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -15,6 +14,7 @@ type appointmentsService struct {
 	datesRepository        domain.DatesRepository
 	timesRepository        domain.TimesRepository
 	eventsRepository       domain.EventsRepository
+	usersRepository        domain.UsersRepository
 }
 
 func NewAppointmentsService(
@@ -22,12 +22,14 @@ func NewAppointmentsService(
 	dr domain.DatesRepository,
 	tr domain.TimesRepository,
 	er domain.EventsRepository,
+	ur domain.UsersRepository,
 ) domain.AppointmentsService {
 	newService := appointmentsService{
 		appointmentsRepository: ar,
 		datesRepository:        dr,
 		timesRepository:        tr,
 		eventsRepository:       er,
+		usersRepository:        ur,
 	}
 
 	return &newService
@@ -53,7 +55,6 @@ func (s *appointmentsService) AddAppointment(
 	if err != nil {
 		return model.PostAppointmentResponse{}, code, err
 	}
-	fmt.Println(result)
 
 	return result, code, err
 }
@@ -112,4 +113,68 @@ func (s *appointmentsService) ConfirmAppointment(
 	}
 
 	return s.eventsRepository.AddEvent(event)
+}
+
+func (s *appointmentsService) GetAppointments(requestHeader model.RequestHeader) ([]model.Appointment, int, error) {
+	accessToken := strings.Split(requestHeader.Authorization, " ")[1]
+
+	credentialId, err := auth.GetAuthCredential(accessToken)
+	if err != nil {
+		return []model.Appointment{}, http.StatusBadRequest, err
+	}
+
+	return s.appointmentsRepository.GetAppointments(credentialId)
+}
+
+func (s *appointmentsService) GetAppointment(
+	payload model.GetAppointmentPayload,
+	requestHeader model.RequestHeader,
+) (model.AppointmentWithRelation, int, error) {
+	if code, err := s.appointmentsRepository.VerifyAppointment(payload.AppointmentID); err != nil {
+		return model.AppointmentWithRelation{}, code, err
+	}
+
+	accessToken := strings.Split(requestHeader.Authorization, " ")[1]
+
+	credentialId, err := auth.GetAuthCredential(accessToken)
+	if err != nil {
+		return model.AppointmentWithRelation{}, http.StatusBadRequest, err
+	}
+
+	if code, err := s.appointmentsRepository.VerifyAppointmentOwner(payload.AppointmentID, credentialId); err != nil {
+		return model.AppointmentWithRelation{}, code, err
+	}
+
+	appointment, code, err := s.appointmentsRepository.GetAppointment(payload.AppointmentID)
+	if err != nil {
+		return model.AppointmentWithRelation{}, code, err
+	}
+
+	dates, code, err := s.datesRepository.GetDates(appointment.ID)
+	if err != nil {
+		return model.AppointmentWithRelation{}, code, err
+	}
+
+	appointmentDates := []model.AppointmentDate{}
+
+	for j := 0; j < len(dates); j++ {
+		times, code, err := s.timesRepository.GetTimes(dates[j].ID)
+		if err != nil {
+			return model.AppointmentWithRelation{}, code, err
+		}
+
+		appointmentDate := model.AppointmentDate{
+			Date:  dates[j],
+			Times: times,
+		}
+
+		appointmentDates = append(appointmentDates, appointmentDate)
+	}
+
+	appointmentWithRelation := model.AppointmentWithRelation{
+		Appointment: appointment,
+		Dates:       appointmentDates,
+	}
+
+	return appointmentWithRelation, http.StatusOK, nil
 }

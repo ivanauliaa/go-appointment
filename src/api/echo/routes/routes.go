@@ -9,4 +9,5 @@ func AssignRoutes(e *echo.Echo) {
 	DatesRoutes(e)
 	TimesRoutes(e)
 	URLsRoutes(e)
+	EventsRoutes(e)
 }

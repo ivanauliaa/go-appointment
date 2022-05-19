@@ -85,3 +85,10 @@ func (r *appointmentsRepository) GetAppointment(appointmentID uint) (model.Appoi
 
 	return appointment, http.StatusOK, nil
 }
+
+func (r *appointmentsRepository) GetAppointments(credentialID uint) ([]model.Appointment, int, error) {
+	appointments := []model.Appointment{}
+	r.db.Where("user_id = ?", credentialID).Find(&appointments)
+
+	return appointments, http.StatusOK, nil
+}
