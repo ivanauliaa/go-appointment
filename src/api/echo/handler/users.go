@@ -27,6 +27,6 @@ func (h *usersHandler) HelloHandler(c echo.Context) error {
 
 func (h *usersHandler) HelloWorldHandler(c echo.Context) error {
 	return c.JSON(200, map[string]interface{}{
-		"today message": "hello world",
+		"message": "hello world",
 	})
 }
